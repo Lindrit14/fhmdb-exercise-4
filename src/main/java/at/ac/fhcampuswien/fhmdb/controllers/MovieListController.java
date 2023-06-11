@@ -14,6 +14,7 @@ import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 
 import at.ac.fhcampuswien.fhmdb.models.SortState;
+import at.ac.fhcampuswien.fhmdb.observerPattern.Observer;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import at.ac.fhcampuswien.fhmdb.ui.UserDialog;
 import com.jfoenix.controls.JFXButton;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class MovieListController implements Initializable {
+public class MovieListController implements Initializable, Observer {
     @FXML
     public JFXButton searchBtn;
 
@@ -69,6 +70,7 @@ public class MovieListController implements Initializable {
     }
 
     protected ISortState IsortState;
+    WatchlistRepository repository;
 
 
     private final ClickEventHandler onAddToWatchlistClicked = (clickedItem) -> {
@@ -95,6 +97,18 @@ public class MovieListController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        try {
+            repository = repository.getInstance();
+            if(repository.observers.isEmpty()) {
+                repository.addObserver(this);
+            }
+        } catch (DataBaseException e) {
+            UserDialog dialog = new UserDialog("Database Error", "Could not read movies from DB");
+            dialog.show();
+            e.printStackTrace();
+
+        }
+
         initializeState();
         initializeLayout();
     }
@@ -251,5 +265,10 @@ public class MovieListController implements Initializable {
             IsortState = new DescendingISortState();
         }
         sortMovies();
+    }
+
+    @Override
+    public void update(String message) {
+
     }
 }

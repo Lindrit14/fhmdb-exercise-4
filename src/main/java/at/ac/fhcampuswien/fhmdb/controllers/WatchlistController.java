@@ -4,6 +4,7 @@ import at.ac.fhcampuswien.fhmdb.ClickEventHandler;
 import at.ac.fhcampuswien.fhmdb.database.DataBaseException;
 import at.ac.fhcampuswien.fhmdb.database.WatchlistMovieEntity;
 import at.ac.fhcampuswien.fhmdb.database.WatchlistRepository;
+import at.ac.fhcampuswien.fhmdb.observerPattern.Observer;
 import at.ac.fhcampuswien.fhmdb.ui.UserDialog;
 import at.ac.fhcampuswien.fhmdb.ui.WatchlistCell;
 import com.jfoenix.controls.JFXListView;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class WatchlistController implements Initializable {
+public class WatchlistController implements Initializable, Observer {
 
     @FXML
     public JFXListView watchlistView;
@@ -31,7 +32,7 @@ public class WatchlistController implements Initializable {
             WatchlistMovieEntity watchlistMovieEntity = (WatchlistMovieEntity) o;
 
             try {
-                WatchlistRepository watchlistRepository = new WatchlistRepository();
+                watchlistRepository = WatchlistRepository.getInstance();
                 watchlistRepository.removeFromWatchlist(watchlistMovieEntity);
                 observableWatchlist.remove(watchlistMovieEntity);
             } catch (DataBaseException e) {
@@ -47,7 +48,7 @@ public class WatchlistController implements Initializable {
 
         List<WatchlistMovieEntity> watchlist = new ArrayList<>();
         try {
-            watchlistRepository = new WatchlistRepository();
+            watchlistRepository = watchlistRepository.getInstance();
             watchlist = getWatchlist();
             observableWatchlist.addAll(getWatchlist());
             watchlistView.setItems(observableWatchlist);
@@ -69,5 +70,10 @@ public class WatchlistController implements Initializable {
 
     private List<WatchlistMovieEntity> getWatchlist() throws DataBaseException {
         return watchlistRepository.readWatchlist();
+    }
+
+    @Override
+    public void update(String message) {
+        System.out.println("Received update: "+ message);
     }
 }
