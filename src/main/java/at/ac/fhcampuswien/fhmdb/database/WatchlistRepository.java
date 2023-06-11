@@ -22,7 +22,7 @@ public class WatchlistRepository implements Observable {
         return instance;
     }
 
-    public WatchlistRepository() throws DataBaseException {
+    private WatchlistRepository() throws DataBaseException {
         try {
             this.dao = DatabaseManager.getInstance().getWatchlistDao();
             this.observers = new ArrayList<>();

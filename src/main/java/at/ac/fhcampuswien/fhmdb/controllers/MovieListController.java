@@ -25,6 +25,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
@@ -85,7 +87,7 @@ public class MovieListController implements Initializable, Observer {
                     movie.getLengthInMinutes(),
                     movie.getRating());
             try {
-                WatchlistRepository repository = new WatchlistRepository();
+                repository = WatchlistRepository.getInstance();
                 repository.addToWatchlist(watchlistMovieEntity);
             } catch (DataBaseException e) {
                 UserDialog dialog = new UserDialog("Database Error", "Could not add movie to watchlist");
@@ -269,6 +271,13 @@ public class MovieListController implements Initializable, Observer {
 
     @Override
     public void update(String message) {
+        Alert.AlertType alertType = Alert.AlertType.NONE;
 
+        if (message.equals("Movie added successfully") || message.equals("Movie is already in Watchlist")) {
+            alertType = Alert.AlertType.INFORMATION;
+        }
+
+        Alert alert = new Alert(alertType, message, ButtonType.OK);
+        alert.show();
     }
 }
