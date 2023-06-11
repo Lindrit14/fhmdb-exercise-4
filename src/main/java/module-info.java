@@ -16,4 +16,6 @@ module at.ac.fhcampuswien.fhmdb {
     exports at.ac.fhcampuswien.fhmdb;
     exports at.ac.fhcampuswien.fhmdb.controllers;
     opens at.ac.fhcampuswien.fhmdb.controllers to javafx.fxml;
+    exports at.ac.fhcampuswien.fhmdb.interfaceSortState;
+    opens at.ac.fhcampuswien.fhmdb.interfaceSortState to javafx.fxml;
 }
